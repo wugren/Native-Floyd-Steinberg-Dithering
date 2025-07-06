@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
-        minSdk 16
-        targetSdk 33
+        minSdk 24
+        targetSdk 34
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         externalNativeBuild {
@@ -24,12 +24,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
     }
     namespace 'com.askjeffreyliu.floydsteinbergdithering'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ndkVersion '26.3.11579264'
 }
 
 // Because the components are created only during the afterEvaluate phase, you must

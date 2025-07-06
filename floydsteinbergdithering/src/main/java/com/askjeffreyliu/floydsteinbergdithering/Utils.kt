@@ -11,24 +11,24 @@ class Utils {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    private external fun floydSteinbergNative(bmp: Bitmap)
+    private external fun floydSteinbergNative(bmp: Bitmap, threshold: Int)
 
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    private external fun binaryBlackAndWhiteNative(bmp: Bitmap)
+    private external fun binaryBlackAndWhiteNative(bmp: Bitmap, threshold: Int)
 
-    fun floydSteinbergDithering(originalColorBitmap: Bitmap): Bitmap {
+    fun floydSteinbergDithering(originalColorBitmap: Bitmap, threshold: Int): Bitmap {
         val bmpGrayScaled = toGrayscale(originalColorBitmap)
-        floydSteinbergNative(bmpGrayScaled)
+        floydSteinbergNative(bmpGrayScaled, threshold)
         return bmpGrayScaled
     }
 
-    fun binaryBlackAndWhite(originalColorBitmap: Bitmap): Bitmap {
+    fun binaryBlackAndWhite(originalColorBitmap: Bitmap, threshold: Int): Bitmap {
         val bmpGrayScaled = toGrayscale(originalColorBitmap)
-        binaryBlackAndWhiteNative(bmpGrayScaled)
+        binaryBlackAndWhiteNative(bmpGrayScaled, threshold)
         return bmpGrayScaled
     }
 

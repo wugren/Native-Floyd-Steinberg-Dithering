@@ -20,11 +20,11 @@ class MainActivity : AppCompatActivity() {
         val original = BitmapFactory.decodeResource(resources, R.drawable.lena)
 
         // Example of a call to the library
-        val fsBitmap = Utils().floydSteinbergDithering(original)
+        val fsBitmap = Utils().floydSteinbergDithering(original, 230)
         binding.imageViewDither.setImageBitmap(fsBitmap)
 
         // Example of a call to the library
-        val bwBitmap = Utils().binaryBlackAndWhite(original)
+        val bwBitmap = Utils().binaryBlackAndWhite(original, 200)
         binding.imageViewMono.setImageBitmap(bwBitmap)
 
         // Example of a call to the library, this is just a simple android gray-scale function

@@ -23,14 +23,14 @@
 
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-static uint32_t find_closest_palette_color(int value) {
-    if (value < 128) {
+static uint32_t find_closest_palette_color(uint32_t value, uint32_t threshold) {
+    if ((int)value < (int)threshold) {
         return 0xFF000000;
     }
     return 0xFFFFFFFF;
 }
 
-static void floydSteinberg(AndroidBitmapInfo *info, void *pixels) {
+static void floydSteinberg(AndroidBitmapInfo *info, void *pixels, uint32_t threshold) {
     int x, y, w = info->width, h = info->height;
     uint32_t *line;
 
@@ -58,7 +58,7 @@ static void floydSteinberg(AndroidBitmapInfo *info, void *pixels) {
         for (x = 0; x < info->width; x++) {
 
             uint32_t oldpixel = d[y][x];
-            uint32_t newpixel = find_closest_palette_color((int) oldpixel);
+            uint32_t newpixel = find_closest_palette_color(oldpixel, threshold);
 
             // set the new pixel back in
             line[x] = newpixel;
@@ -86,13 +86,13 @@ static void floydSteinberg(AndroidBitmapInfo *info, void *pixels) {
     delete[] d;
 }
 
-static void global_mono(AndroidBitmapInfo *info, void *pixels) {
+static void global_mono(AndroidBitmapInfo *info, void *pixels, uint32_t threshold) {
     int x, y;
     uint32_t *line;
     for (y = 0; y < info->height; y++) {
         line = (uint32_t *) pixels;
         for (x = 0; x < info->width; x++) {
-            line[x] = find_closest_palette_color((int) (line[x] & 0xFFu));
+            line[x] = find_closest_palette_color((int) (line[x] & 0xFFu), threshold);
         }
 
         pixels = (char *) pixels + info->stride;
@@ -106,7 +106,8 @@ extern "C" {
 
 void Java_com_askjeffreyliu_floydsteinbergdithering_Utils_binaryBlackAndWhiteNative(JNIEnv *env,
                                                                                     jclass obj,
-                                                                                    jobject bitmap) {
+                                                                                    jobject bitmap,
+                                                                                    jint threshold) {
     AndroidBitmapInfo info;
     int ret;
     void *pixels;
@@ -124,14 +125,15 @@ void Java_com_askjeffreyliu_floydsteinbergdithering_Utils_binaryBlackAndWhiteNat
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-    global_mono(&info, pixels);
+    global_mono(&info, pixels, (uint32_t)threshold);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
 void Java_com_askjeffreyliu_floydsteinbergdithering_Utils_floydSteinbergNative(JNIEnv *env,
                                                                                jclass obj,
-                                                                               jobject bitmap) {
+                                                                               jobject bitmap,
+                                                                               jint threshold) {
     AndroidBitmapInfo info;
     int ret;
     void *pixels;
@@ -149,7 +151,7 @@ void Java_com_askjeffreyliu_floydsteinbergdithering_Utils_floydSteinbergNative(J
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-    floydSteinberg(&info, pixels);
+    floydSteinberg(&info, pixels, (uint32_t)threshold);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 }
